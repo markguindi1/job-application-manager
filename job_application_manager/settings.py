@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+from .settings_secret import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'application_manager.apps.ApplicationManagerConfig',
 ]
 
 MIDDLEWARE = [
@@ -73,12 +75,25 @@ WSGI_APPLICATION = 'job_application_manager.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': database_name, # from settings_secret.py
+        'USER': database_user, # from settings_secret.py
+        'PASSWORD': database_password, # from settings_secret.py
+        'HOST': '',   # Or an IP Address that your DB is hosted on
+        'PORT': '5432',
+        'ATOMIC_REQUESTS': True,
     }
 }
+
 
 
 # Password validation
