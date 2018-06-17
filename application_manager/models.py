@@ -7,25 +7,28 @@ class Application(models.Model):
     PARTTIME = 'Part-time'
     INTERNSHIP = 'Internship'
     PARTTIME_INTERNSHIP = 'Part-time intership'
-    UNKNOWN = None
     POSITION_TYPE_CHOICES = [
         (FULLTIME, 'Full-time'),
         (PARTTIME, 'Part-time'),
         (INTERNSHIP, 'Internship'),
         (PARTTIME_INTERNSHIP, 'Part-time intership'),
-        (UNKNOWN, None)
     ]
 
     NOT_APPLIED = "Didn't apply yet"
     IN_PROGRESS = 'In progress'
     APPLIED = 'Applied'
+    INTERVIEWING = "Interviewing"
     ACCEPTED = 'Accepted'
     REJECTED = 'Rejected'
+    OFFER_ACCEPTED = 'Offer accepted'
     STATUS_CHOICES = [
         (NOT_APPLIED, "Didn't apply yet"),
         (IN_PROGRESS, 'In progress'),
         (APPLIED, 'Applied'),
-        (REJECTED, 'Rejected')
+        (INTERVIEWING, "Interviewing"),
+        (ACCEPTED, 'Accepted'),
+        (REJECTED, 'Rejected'),
+        (OFFER_ACCEPTED, "Offer accepted")
     ]
 
     company_name = models.CharField(max_length=100)
@@ -34,13 +37,31 @@ class Application(models.Model):
     city = models.CharField(max_length=30)
     state = models.CharField(max_length=5, null=True)
     country = models.CharField(max_length=20)
-    on_site = models.NullBooleanField()
+    on_site = models.NullBooleanField(null=True)
     application_link = models.CharField(max_length=256, null=True)
-    status = models.CharField(max_length=16, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=30, null=True, choices=STATUS_CHOICES)
     lead = models.SmallIntegerField()
 
 class Email(models.Model):
+    JOB_AD = "Job ad"
+    IN_PROGRESS = 'In progress'
+    APPLIED = 'Applied'
+    INTERVIEWING = "Interviewing"
+    ACCEPTANCE = 'Acceptance'
+    REJECTION = 'Rejection'
+    OFFER_ACCEPTANCE = 'Offer acceptance'
+    TAG_CHOICES = [
+        (JOB_AD, "Job ad"),
+        (IN_PROGRESS, 'In progress'),
+        (APPLIED, 'Applied'),
+        (INTERVIEWING, "Interviewing"),
+        (ACCEPTANCE, 'Acceptance'),
+        (REJECTION, 'Rejection'),
+        (OFFER_ACCEPTANCE, "Offer acceptance")
+    ]
+
     email_link = models.CharField(max_length = 256)
+    email_tag = models.CharField(max_length=30, null=True, choices=TAG_CHOICES)
 
 class Link(models.Model):
     link = models.CharField(max_length = 256)
