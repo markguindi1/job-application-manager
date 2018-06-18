@@ -1,0 +1,104 @@
+<! DOCTYPE html>
+<html>
+  <head>
+
+  {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'application_manager/style.css' %}">
+  </head>
+
+  <body>
+
+    <h2> Job Application Manager Homepage</h2>
+    <h3> ListView </h3>
+
+    <table id="apps-table">
+      <thead>
+        <tr>
+          <th>
+            Company name
+          </th>
+          <th>
+            Position
+          </th>
+          <th>
+            Position type
+          </th>
+          <th>
+            City
+          </th>
+          <th>
+            State
+          </th>
+          <th>
+            Country
+          </th>
+          <th>
+            On site
+          </th>
+          <th>
+            Application link
+          </th>
+          <th>
+            Status
+          </th>
+          <th>
+            Lead
+          </th>
+          <th>
+          </th>
+          <th>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for app in applications %}
+          <tr>
+            <td>
+              {{ app.company_name }}
+            </td>
+            <td>
+              {{ app.position }}
+            </td>
+            <td>
+              {{ app.position_type}}
+            </td>
+            <td>
+              {{ app.city }}
+            </td>
+            <td>
+              {{ app.state }}
+            </td>
+            <td>
+              {{ app.country }}
+            </td>
+            <td>
+              {{ app.on_site }}
+            </td>
+            <td>
+              {{ app.application_link }}
+            </td>
+            <td>
+              {{ app.status }}
+            </td>
+            <td>
+              {{ app.lead }}
+            </td>
+            <td>
+              <a href="{% url 'application_manager:application-update' pk=app.pk %}"><button type="button">Edit</button></a>
+            </td>
+            <td>
+              <a href="{% url 'application_manager:application-delete' pk=app.pk %}"><button type="button">Delete</button></a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <br />
+    <br />
+
+    <a href="{% url 'application_manager:application-create' %}"><button type="button">Add application </button></a>
+
+  </body>
+
+</html>

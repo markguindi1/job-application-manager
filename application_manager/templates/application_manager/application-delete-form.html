@@ -1,0 +1,20 @@
+
+
+
+<form method="POST">
+  {% csrf_token %}
+  <br />
+
+  <p>
+    Are you sure you want to delete the following application?
+    <br />
+    <br />
+    {{ object }}
+  </p>
+
+  <br />
+
+  <input type="submit" value="Delete" />
+  <a href="{% url 'application_manager:application-list' %}"><button type="button">Cancel </button></a>
+
+</form>
