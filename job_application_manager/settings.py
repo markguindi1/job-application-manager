@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'application_manager.apps.ApplicationManagerConfig',
-    #'application_manager',
-    'django_tables2',
+    'email_manager.apps.EmailManagerConfig',
+    #'django_tables2',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                #'django.core.context_processors.request', 
             ],
         },
     },

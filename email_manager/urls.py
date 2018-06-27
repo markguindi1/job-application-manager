@@ -1,4 +1,4 @@
-"""job_application_manager URL Configuration
+"""email_manager URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.0/topics/http/urls/
@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from . import views
 
+app_name = 'email_manager'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('application_manager.urls')),
-    path('email/', include('email_manager.urls')), 
+    path('', views.EmailFormView.as_view(), name="email-form"),
+    path('emails/', views.EmailsListView.as_view(), name="emails-list")
 ]
