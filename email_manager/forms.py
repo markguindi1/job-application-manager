@@ -1,10 +1,10 @@
 from django import forms
 
-class DateInput(forms.DateInput):
+class CustomDateInput(forms.DateInput):
     input_type = 'date'
 
 
 class EmailForm(forms.Form):
-    email = forms.CharField(max_length=60)
+    gmail_email = forms.EmailField(max_length=60)
     password = forms.CharField(max_length=100, widget=forms.PasswordInput())
-    emails_since = forms.DateField(widget=DateInput())
+    emails_since = forms.DateField(widget=CustomDateInput())

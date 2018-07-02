@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.core import serializers
+from django.core.exceptions import ValidationError
 from .models import *
 from .get_emails import *
 from .forms import *
@@ -18,10 +19,18 @@ class EmailFormView(FormView):
 
     def form_valid(self, form):
         # Get email, pswd, since_date, use them to get emails
-        email = form.cleaned_data['email']
+        email_address = form.cleaned_data['gmail_email']
         pswd = form.cleaned_data['password']
         date_from = form.cleaned_data['emails_since']
-        emails_list = get_emails(email, pswd, date_from)
+
+        try:
+            emails_list = get_emails(email_address, pswd, date_from)
+        except Exception as e:
+            #credens_error = ValidationError(_("Invalid credentials"), code="invalid_credens")
+            credens_error = ValidationError("Invalid credentials", code="invalid_credens")
+            form.add_error(None, credens_error)
+            print(form.non_field_errors())
+            return self.form_invalid(form)
 
         # Serialize emails list to JSON for adding to session dict
         emails_json = json.dumps([email.__dict__ for email in emails_list])
@@ -40,5 +49,5 @@ class EmailsListView(TemplateView):
         # Un-serialize JSON email list, back to Python list for use in template context
         emails_list = json.loads(emails_json)
         context['emails'] = emails_list
-        
+
         return context
