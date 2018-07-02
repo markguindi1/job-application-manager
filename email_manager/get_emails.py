@@ -1,7 +1,5 @@
-import smtplib
 import imaplib
 import datetime
-import time
 import email
 
 SMTP_SERVER = "imap.gmail.com"

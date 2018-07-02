@@ -2,13 +2,13 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from django.core import serializers
 from django.core.exceptions import ValidationError
 from .models import *
 from .get_emails import *
 from .forms import *
 import datetime
 import json
+import imaplib
 
 # Create your views here.
 
@@ -23,13 +23,13 @@ class EmailFormView(FormView):
         pswd = form.cleaned_data['password']
         date_from = form.cleaned_data['emails_since']
 
+        # If authentication fails, redirect to email login page with prepopulated form
+        # (by returning self.form_invalid(form)) and display "Invalid credentials" error message
         try:
             emails_list = get_emails(email_address, pswd, date_from)
-        except Exception as e:
-            #credens_error = ValidationError(_("Invalid credentials"), code="invalid_credens")
+        except imaplib.IMAP4.error as e:
             credens_error = ValidationError("Invalid credentials", code="invalid_credens")
             form.add_error(None, credens_error)
-            print(form.non_field_errors())
             return self.form_invalid(form)
 
         # Serialize emails list to JSON for adding to session dict
