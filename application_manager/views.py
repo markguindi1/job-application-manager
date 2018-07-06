@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import *
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from .forms import *
 from .tables import *
@@ -17,10 +18,14 @@ APPLICATION_FORM_FIELDS = ['company_name',
           'status',
           'lead'
 ]
+
+class HomepageView(TemplateView):
+    template_name = "application_manager/base.html"
+
 # This class contains the model name, template name, and context_object_name.
 # It's queryset is automatically set to all instances of its model, and it returns
 # an HttpResponse with all of the instances of its model
-class ApplicationsListView(ListView):
+class ApplicationsListView(LoginRequiredMixin, ListView):
     model = Application
     template_name = "application_manager/index.html"
     context_object_name = 'applications'
@@ -28,7 +33,7 @@ class ApplicationsListView(ListView):
 # when request.method == GET, returns HttpResponse of template containing empty
 # form for its model. When request method is POST, saves it to database, and redirects
 # to models absolute url (model.get_absolute_url)
-class ApplicationCreate(CreateView):
+class ApplicationCreate(LoginRequiredMixin, CreateView):
     model = Application
     fields = APPLICATION_FORM_FIELDS
     template_name_suffix = '-form'
@@ -37,7 +42,7 @@ class ApplicationCreate(CreateView):
 # for its model, populated with its objects values, for editing/updating.
 # When request method is POST, saves it to database, and redirects
 # to models absolute url (model.get_absolute_url)
-class ApplicationUpdate(UpdateView):
+class ApplicationUpdate(LoginRequiredMixin, UpdateView):
     model = Application
     fields = APPLICATION_FORM_FIELDS
     template_name_suffix = '-form'
@@ -46,7 +51,7 @@ class ApplicationUpdate(UpdateView):
 # confirmation for deletion of its object.
 # When request method is POST, deletes it from database, and redirects
 # to success_url (NOT models absolute url)
-class ApplicationDelete(DeleteView):
+class ApplicationDelete(LoginRequiredMixin, DeleteView):
     model = Application
     fields = APPLICATION_FORM_FIELDS
     template_name_suffix = '-delete-form'

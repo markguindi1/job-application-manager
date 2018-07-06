@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.core.exceptions import ValidationError
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from .get_emails import *
 from .forms import *
@@ -12,7 +13,7 @@ import imaplib
 
 # Create your views here.
 
-class EmailFormView(FormView):
+class EmailFormView(LoginRequiredMixin, FormView):
     template_name = "email_manager/email-form.html"
     form_class = EmailForm
     success_url = reverse_lazy('email_manager:emails-list')
@@ -39,7 +40,7 @@ class EmailFormView(FormView):
         # Return Httpresponse:
         return super().form_valid(form)
 
-class EmailsListView(TemplateView):
+class EmailsListView(LoginRequiredMixin, TemplateView):
     template_name = "email_manager/emails-list.html"
 
     def get_context_data(self, **kwargs):
