@@ -17,39 +17,47 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <!--<li class="nav-item active">-->
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'homepage:homepage' %}">Home <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'application_manager:application-list' %}">Applications</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'email_manager:email-form' %}">Emails</a>
-          </li>
-          <!--<li class="nav-item">
-            <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
-          </li>-->
-        </ul>
-        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'user_accounts:user-create' %}">Register</a>
+      {% with request.resolver_match.url_name as url_name %}
+        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <!--<li class="nav-item active">-->
+            <li class="nav-item {% if url_name == 'homepage' %} active {% endif %}">
+              <a class="nav-link" href="{% url 'homepage:homepage' %}">Home <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'user_accounts:login' %}">Login</a>
+            <li class="nav-item {% if url_name == 'application-list' %} active {% endif %}">
+              <a class="nav-link" href="{% url 'application_manager:application-list' %}">Applications</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'user_accounts:logout' %}">Logout</a>
+            <li class="nav-item {% if url_name == 'email-form' %} active {% endif %}">
+              <a class="nav-link" href="{% url 'email_manager:email-form' %}">Emails</a>
             </li>
+            <!--<li class="nav-item">
+              <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+            </li>-->
+          </ul>
+          <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul class="navbar-nav ml-auto">
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link"> Hello, {{ user.username }} </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'user_accounts:logout' %}">Logout</a>
+              </li>
+              {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'user_accounts:user-create' %}">Register</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'user_accounts:login' %}">Login</a>
+              </li>
+              {% endif %}
+            </ul>
+          </div>
+
+
           </ul>
         </div>
-
-
-        </ul>
-      </div>
+      {% endwith %}
     </nav>
 
     {% block body %}
