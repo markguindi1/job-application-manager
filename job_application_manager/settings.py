@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'application_manager.apps.ApplicationManagerConfig',
     'email_manager.apps.EmailManagerConfig',
-    #'django_tables2',
+    'user_accounts.apps.UserAccountsConfig',
 ]
 
 MIDDLEWARE = [

@@ -1,4 +1,4 @@
-"""job_application_manager URL Configuration
+"""application_manager URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.0/topics/http/urls/
@@ -15,11 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from . import views
+
+app_name = 'user_accounts'
 
 urlpatterns = [
-    path('', include('application_manager.homepage_urls')),
-    path('admin/', admin.site.urls),
-    path('user/', include('user_accounts.urls')),
-    path('application/', include('application_manager.urls')),
-    path('email/', include('email_manager.urls')),
+    path('', include('django.contrib.auth.urls')),
+    path('register/', views.UserCreate.as_view(), name="user-create"),
 ]
