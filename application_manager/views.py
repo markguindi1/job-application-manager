@@ -33,8 +33,7 @@ class UserCreate(CreateView):
     def form_valid(self, form):
 
         # Check for other users with same username
-        other_users_same_username = User.objects.all().filter(username=form.cleaned_data['username'])
-        if len(other_users_same_username) > 0:
+        if User.objects.filter(username=form.cleaned_data['username']).exists():
             username_taken_error = ValidationError("Username already taken", code="username_taken")
             form.add_error('username', username_taken_error)
             return self.form_invalid(form)
