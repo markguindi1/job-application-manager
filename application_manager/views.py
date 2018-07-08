@@ -32,6 +32,7 @@ class UserCreate(CreateView):
 
     def form_valid(self, form):
 
+        # Check for other users with same username
         other_users_same_username = User.objects.all().filter(username=form.cleaned_data['username'])
         if len(other_users_same_username) > 0:
             username_taken_error = ValidationError("Username already taken", code="username_taken")
@@ -83,11 +84,6 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
     model = Application
     fields = APPLICATION_FORM_FIELDS
     template_name_suffix = '-form'
-
-    # Overriden in order to set the updated application's user to the current user
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
 
 # when request.method == GET, accepts pk parameter, and returns HttpResponse of template containing
 # confirmation for deletion of its object.
