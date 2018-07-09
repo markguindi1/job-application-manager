@@ -9,7 +9,7 @@ The web app uses Python 3.6, the Django Web Framework (version 2.0), and a Postg
 This project is still in development. So far, the following have been completed:
 * Allowing a user to create, edit, and delete job applications, and their relevant information
 * Allowing the user to log into their Gmail account (without using OAuth2, so "Enable less secure apps" must be enabled on their account), retrieve messages from their inbox since a specified date, and view the message sender, subject, and date received, in a table.
-* User login, authentication, and logout
+* User registration, login, authentication, and logout
   
 I hope to add the following functionalities soon, as I work on this project over the summer of 2018:
 * User registration, and further user account functions (password reset, etc.)
