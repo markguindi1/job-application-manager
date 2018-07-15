@@ -53,6 +53,11 @@ class Application(models.Model):
     def get_absolute_url(self):
         return reverse('application_manager:application-list')
 
+
+class EmailAddress(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    address = models.EmailField()
+
 class Email(models.Model):
     JOB_AD = "Job ad"
     IN_PROGRESS = 'In progress'
