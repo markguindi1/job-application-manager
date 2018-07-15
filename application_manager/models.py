@@ -79,6 +79,7 @@ class Email(models.Model):
     ]
 
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
+    email_address = models.ForeignKey(EmailAddress, null=True, on_delete=models.SET_NULL)
     email_link = models.CharField(max_length = 256)
     email_tag = models.CharField(max_length=30, null=True, blank=True, choices=TAG_CHOICES)
 
