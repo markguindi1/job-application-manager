@@ -106,3 +106,4 @@ venv.bak/
 # My own files
 job_application_manager/settings_secret.py
 TODO.txt
+.idea/

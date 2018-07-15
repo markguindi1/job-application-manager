@@ -10,8 +10,10 @@ This project is still in development. So far, the following have been completed:
 * Allowing a user to create, edit, and delete job applications, and their relevant information
 * Allowing the user to log into their Gmail account (without using OAuth2, so "Enable less secure apps" must be enabled on their account), retrieve messages from their inbox since a specified date, and view the message sender, subject, and date received, in a table.
 * User login, authentication, and logout
+* User registration, login, authentication, and logout
+  
 
-I hope to add the following functionalities soon, as I work on this project over the summer of 2018:
+I hope to add the following functionality soon, as I work on this project over the summer of 2018:
 * Advanced user account functions (password reset, etc.)
 * Linking user's multiple email accounts, so they only need to provide a password for authentication
 * Support for email accounts other than Gmail
