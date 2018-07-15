@@ -58,6 +58,10 @@ class EmailAddress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.EmailField()
 
+    def __str__(self):
+        return self.address
+
+
 class Email(models.Model):
     JOB_AD = "Job ad"
     IN_PROGRESS = 'In progress'
@@ -83,15 +87,26 @@ class Email(models.Model):
     email_link = models.CharField(max_length = 256)
     email_tag = models.CharField(max_length=30, null=True, blank=True, choices=TAG_CHOICES)
 
+    def __str__(self):
+        return "Email at {} for {}".format(self.email_address, str(self.application))
+
+
 class Link(models.Model):
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
     link = models.CharField(max_length = 300)
+
+    def __str__(self):
+        return "Link for {}".format(str(self.application))
+
 
 class Note(models.Model):
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
     date_created = models.DateTimeField(null=True, blank=True)
     date_last_edited = models.DateTimeField(null=True, blank=True)
     content = models.TextField()
+
+    def __str__(self):
+        return "Note for {}".format(str(self.application))
 
 class Appointment(models.Model):
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
@@ -103,3 +118,6 @@ class Appointment(models.Model):
     end_time = models.DateTimeField(null=True, blank=True)
     on_site = models.NullBooleanField(null=True, blank=True)
     note = models.TextField()
+
+    def __str__(self):
+        return "Note for {}".format(str(self.application))
