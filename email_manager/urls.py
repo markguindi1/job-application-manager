@@ -21,5 +21,6 @@ app_name = 'email_manager'
 
 urlpatterns = [
     path('', views.EmailFormView.as_view(), name="email-form"),
-    path('emails/', views.EmailsListView.as_view(), name="emails-list")
+    path('addresses/', views.EmailAccountsListView.as_view(), name="emails_addresses_list"),
+    path('emails/', views.EmailsListView.as_view(), name="emails-list"),
 ]

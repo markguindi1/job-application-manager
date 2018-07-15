@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.views.generic import *
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.core.exceptions import ValidationError
@@ -12,6 +13,17 @@ import json
 import imaplib
 
 # Create your views here.
+
+
+class EmailAccountsListView(LoginRequiredMixin, ListView):
+    model = EmailAddress
+    template_name = "email_manager/email-address-list.html"
+    context_object_name = 'email_addresses'
+
+    def get_queryset(self):
+        queryset = super(EmailAccountsListView, self).get_queryset().filter(user=self.request.user)
+        return queryset
+
 
 class EmailFormView(LoginRequiredMixin, FormView):
     template_name = "email_manager/email-form.html"

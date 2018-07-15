@@ -1,0 +1,54 @@
+
+{% extends 'application_manager/base.html' %}
+
+{% block body %}
+
+  <div class="container">
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'application_manager/style.css' %}">
+    <br />
+    <h2> Email Addresses </h2>
+    <br />
+    <!--<table class="table" id="apps-table">-->
+    <table class="table table-striped table-bordered table-sm">
+      <thead class="thead thead-dark">
+        <tr>
+          <th>
+            Email Address
+          </th>
+          <th>
+          </th>
+          <th>
+          </th>
+          <th>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for email_address in email_addresses %}
+          <tr>
+            <td>
+              {{ email_address.address }}
+            </td>
+            <td>
+              <a href="#"><button type="button" class="btn btn-primary btn-sm">Get Emails</button></a>
+            </td>
+            <td>
+              <a href="#"><button type="button" class="btn btn-info btn-sm">Edit</button></a>
+            </td>
+            <td>
+              <a href="#"><button type="button" class="btn btn-danger btn-sm">Delete</button></a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <br />
+    <br />
+    <br />
+
+  </div>
+
+{% endblock %}
