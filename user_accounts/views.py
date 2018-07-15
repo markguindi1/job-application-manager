@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from application_manager.models import *
 
 # Create your views here.
@@ -22,6 +23,7 @@ class UserCreate(CreateView):
             form.add_error('username', username_taken_error)
             return self.form_invalid(form)
 
+        # Login the newly registered user
         # First catch the value of parent class method form_valid() in valid,
         # because when you call it, it calls the form.save(), which registers
         # the user in the database and populates your self.object with the user created.
@@ -31,3 +33,9 @@ class UserCreate(CreateView):
         new_user = authenticate(username=username, password=password, )
         login(self.request, new_user)
         return valid
+
+
+class ManageAccountView(LoginRequiredMixin, TemplateView):
+    template_name = "registration/manage-account.html"
+
+
