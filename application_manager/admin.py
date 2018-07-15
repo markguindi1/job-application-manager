@@ -4,6 +4,8 @@ from .models import *
 # Register your models here.
 
 admin.site.register(Application)
+admin.site.register(EmailAddress)
 admin.site.register(Email)
 admin.site.register(Link)
+admin.site.register(Note)
 admin.site.register(Appointment)
