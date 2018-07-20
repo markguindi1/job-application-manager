@@ -32,7 +32,8 @@
               {{ email_address.address }}
             </td>
             <td>
-              <a href="#"><button type="button" class="btn btn-primary btn-sm">Get Emails</button></a>
+              <!--<a href="#"><button type="button" class="btn btn-primary btn-sm">Get Emails</button></a>-->
+              <form action="{% url 'email_manager:email-form' %}"><button type="submit" name="email_addr" value="{{ email_address.address }}" class="btn btn-primary btn-sm"> Get Emails </button></form>
             </td>
             <td>
               <a href="#"><button type="button" class="btn btn-info btn-sm">Edit</button></a>

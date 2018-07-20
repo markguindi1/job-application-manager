@@ -30,6 +30,21 @@ class EmailFormView(LoginRequiredMixin, FormView):
     form_class = EmailForm
     success_url = reverse_lazy('email_manager:emails-list')
 
+    def get(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        context = self.get_context_data(**kwargs)
+        try:
+            email_addr = self.request.GET["email_addr"]
+        except:
+            email_addr = None
+        print(str(kwargs))
+        if email_addr is not None:
+            form.initial = {"gmail_email" : email_addr }
+            form.fields["gmail_email"].disabled = True
+        context['form'] = form
+        return self.render_to_response(context)
+
     def form_valid(self, form):
         # Get email, pswd, since_date, use them to get emails
         email_address = form.cleaned_data['gmail_email']
@@ -58,6 +73,7 @@ class EmailsListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         emails_json = self.request.session['emails']
+        del self.request.session['emails']
 
         # Un-serialize JSON email list, back to Python list for use in template context
         emails_list = json.loads(emails_json)
