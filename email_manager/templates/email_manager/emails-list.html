@@ -21,6 +21,11 @@
           <th>
             Date
           </th>
+          <th>
+            Message
+          </th>
+          <th>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -34,6 +39,12 @@
             </td>
             <td>
               {{ email.date }}
+            </td>
+            <td>
+              {{ email.content | truncatechars:50 }}
+            </td>
+            <td>
+              <button class="btn btn-info btn-sm"> View </button>
             </td>
           </tr>
         {% endfor %}

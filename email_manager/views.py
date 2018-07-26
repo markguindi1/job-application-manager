@@ -25,6 +25,18 @@ class EmailAccountsListView(LoginRequiredMixin, ListView):
         return queryset
 
 
+class EmailAccountsCreateView(LoginRequiredMixin, CreateView):
+    model = EmailAddress
+    fields = ["address"]
+    template_name = "email_manager/email-address-form.html"
+    success_url = reverse_lazy("email_manager:emails_addresses_list")
+
+    # Overridden in order to set the new application's user to the current user
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
 class EmailFormView(LoginRequiredMixin, FormView):
     template_name = "email_manager/email-form.html"
     form_class = EmailForm
@@ -40,8 +52,7 @@ class EmailFormView(LoginRequiredMixin, FormView):
             email_addr = None
         print(str(kwargs))
         if email_addr is not None:
-            form.initial = {"gmail_email" : email_addr }
-            form.fields["gmail_email"].disabled = True
+            form.initial = {"gmail_email": email_addr}
         context['form'] = form
         return self.render_to_response(context)
 
@@ -73,7 +84,7 @@ class EmailsListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         emails_json = self.request.session['emails']
-        del self.request.session['emails']
+        #del self.request.session['emails']
 
         # Un-serialize JSON email list, back to Python list for use in template context
         emails_list = json.loads(emails_json)

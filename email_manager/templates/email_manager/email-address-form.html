@@ -1,0 +1,18 @@
+
+{% extends 'application_manager/base.html' %}
+
+{% block body %}
+
+  <div class="container">
+    <br />
+    <form method="POST">
+      {% csrf_token %}
+        <table>
+          {{ form.as_table }}
+        </table>
+        <br />
+      <input type="submit" class="btn btn-success" value="Add email address" />
+    </form>
+  </div>
+
+{% endblock %}
