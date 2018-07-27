@@ -21,7 +21,9 @@ app_name = 'email_manager'
 
 urlpatterns = [
     path('', views.EmailAccountsListView.as_view(), name="emails_addresses_list"),
-    path('create', views.EmailAccountsCreateView.as_view(), name="email_address_create"),
+    path('create', views.EmailAccountCreate.as_view(), name="email_address_create"),
+    path('<int:pk>', views.EmailAccountUpdate.as_view(), name="email_address_update"),
+    path('<int:pk>/delete', views.EmailAccountDelete.as_view(), name="email_address_delete"),
     path('email-form', views.EmailFormView.as_view(), name="email-form"),
     path('emails', views.EmailsListView.as_view(), name="emails-list"),
 ]

@@ -25,7 +25,7 @@ class EmailAccountsListView(LoginRequiredMixin, ListView):
         return queryset
 
 
-class EmailAccountsCreateView(LoginRequiredMixin, CreateView):
+class EmailAccountCreate(LoginRequiredMixin, CreateView):
     model = EmailAddress
     fields = ["address"]
     template_name = "email_manager/email-address-form.html"
@@ -35,6 +35,26 @@ class EmailAccountsCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
+
+class EmailAccountUpdate(LoginRequiredMixin, UpdateView):
+    model = EmailAddress
+    fields = ["address"]
+    template_name = "email_manager/email-address-form.html"
+    success_url = reverse_lazy("email_manager:emails_addresses_list")
+
+    def get_queryset(self):
+        return super(EmailAccountUpdate, self).get_queryset().filter(user=self.request.user)
+
+
+class EmailAccountDelete(LoginRequiredMixin, DeleteView):
+    model = EmailAddress
+    fields = ["address"]
+    template_name = "email_manager/email-address-delete-form.html"
+    success_url = reverse_lazy("email_manager:emails_addresses_list")
+
+    def get_queryset(self):
+        return super(EmailAccountDelete, self).get_queryset().filter(user=self.request.user)
 
 
 class EmailFormView(LoginRequiredMixin, FormView):
