@@ -50,7 +50,7 @@ class Application(models.Model):
     def __str__(self):
         return self.company_name + ' (' + self.position + ')'
 
-    def get_absolute_url(self):
+    def get_absolute_url():
         return reverse('application_manager:application-list')
 
 
@@ -60,6 +60,9 @@ class EmailAddress(models.Model):
 
     def __str__(self):
         return self.address
+
+    def get_absolute_url():
+        return reverse('email_manager:emails_addresses_list')
 
 
 class Email(models.Model):
