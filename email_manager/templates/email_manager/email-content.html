@@ -1,0 +1,13 @@
+
+{% extends 'application_manager/base.html' %}
+
+{% block body %}
+
+  <div class="container">
+    <br />
+    {% autoescape off %}
+      {{ email_text }}
+    {% endautoescape %}
+  </div>
+
+{% endblock %}
