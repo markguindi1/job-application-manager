@@ -7,11 +7,12 @@ SMTP_PORT   = 993
 
 
 class Email:
-    def __init__(self, id, from_email, date, subject):
+    def __init__(self, id, from_email, date, subject, content=None):
         self.id = id
         self.from_email = from_email
         self.date = date
         self.subject = subject
+        self.content = content
 
 # %d-%b-%Y
 # date format: 17-Jun-2018
@@ -47,7 +48,7 @@ def get_emails(gmail_email, pswd, since_date):
         earlier_email_id = int(id_list[0])
         latest_email_id = int(id_list[-1])
 
-        # for the id of emazils received since the specified date
+        # for the id of emails received since the specified date
         for i in range(latest_email_id, earlier_email_id, -1):
 
             # typ is some status code, like above. "OK" in this case.
@@ -65,7 +66,13 @@ def get_emails(gmail_email, pswd, since_date):
                     email_subject = msg['subject']
                     email_from = msg['from']
                     email_date = msg['date']
-                    an_email = Email(email_id, email_from, email_date, email_subject)
+                    email_content = ""
+                    for part in msg.walk():
+                        if part.get_content_type() == "text/plain" or part.get_content_type() == "text/html":  # ignore attachments/html
+                            body = part.get_payload(decode=True).decode("utf-8")
+                            email_content += body
+
+                    an_email = Email(email_id, email_from, email_date, email_subject, email_content)
                     emails_list.append(an_email)
 
     # If there are no emails (quick fix - to do proper fix later)
@@ -73,3 +80,43 @@ def get_emails(gmail_email, pswd, since_date):
         pass
 
     return emails_list
+
+
+
+# Credit: https://gist.github.com/ktmud/cb5e3ca0222f86f5d0575caddbd25c03
+
+# def extract_body(msg, depth=0):
+#     """ Extract content body of an email messsage """
+#     body = []
+#     if msg.is_multipart():
+#         main_content = None
+#         # multi-part emails often have both
+#         # a text/plain and a text/html part.
+#         # Use the first `text/plain` part if there is one,
+#         # otherwise take the first `text/*` part.
+#         for part in msg.get_payload():
+#             is_txt = part.get_content_type() == 'text/plain'
+#             if not main_content or is_txt:
+#                 main_content = extract_body(part)
+#             if is_txt:
+#                 break
+#         if main_content:
+#             body.extend(main_content)
+#     elif msg.get_content_type().startswith("text/"):
+#         # Get the messages
+#         charset = msg.get_param('charset', 'utf-8').lower()
+#         # update charset aliases
+#         charset = email.charset.ALIASES.get(charset, charset)
+#         msg.set_param('charset', charset)
+#         try:
+#             body.append(msg.get_content())
+#         except AssertionError as e:
+#             print('Parsing failed.    ')
+#             print(e)
+#         except LookupError:
+#             # set all unknown encoding to utf-8
+#             # then add a header to indicate this might be a spam
+#             msg.set_param('charset', 'utf-8')
+#             body.append('=== <UNKOWN ENCODING POSSIBLY SPAM> ===')
+#             body.append(msg.get_content())
+#     return body
