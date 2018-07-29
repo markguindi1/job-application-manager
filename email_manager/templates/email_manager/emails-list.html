@@ -9,47 +9,49 @@
     <br />
     <h1> Hello there <h1>
 
-    <table class="table table-striped table-bordered table-sm">
-      <thead class="thead thead-dark">
-        <tr>
-          <th>
-            Sender
-          </th>
-          <th>
-            Subject
-          </th>
-          <th>
-            Date
-          </th>
-          <th>
-            Message
-          </th>
-          <th>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for email in emails %}
+    <form action="{% url 'email_manager:email_content' %}">
+      <table class="table table-striped table-bordered table-sm">
+        <thead class="thead thead-dark">
           <tr>
-            <td>
-              {{ email.from_email }}
-            </td>
-            <td>
-              {{ email.subject }}
-            </td>
-            <td>
-              {{ email.date }}
-            </td>
-            <td>
-              {{ email.content | truncatechars:50 }}
-            </td>
-            <td>
-              <button class="btn btn-info btn-sm"> View </button>
-            </td>
+            <th>
+              Sender
+            </th>
+            <th>
+              Subject
+            </th>
+            <th>
+              Date
+            </th>
+            <th>
+              Message
+            </th>
+            <th>
+            </th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {% for email in emails %}
+            <tr>
+              <td>
+                {{ email.from_email }}
+              </td>
+              <td>
+                {{ email.subject }}
+              </td>
+              <td>
+                {{ email.date }}
+              </td>
+              <td>
+                {{ email.content | truncatechars:50 }}
+              </td>
+              <td>
+                <button type="submit" name="email-id" value="{{ email.id }}" class="btn btn-info btn-sm"> View </button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </form>
 
   </div>
 
