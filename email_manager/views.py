@@ -70,7 +70,6 @@ class EmailFormView(LoginRequiredMixin, FormView):
             email_addr = self.request.GET["email_addr"]
         except:
             email_addr = None
-        print(str(kwargs))
         if email_addr is not None:
             form.initial = {"gmail_email": email_addr}
         context['form'] = form
@@ -92,11 +91,13 @@ class EmailFormView(LoginRequiredMixin, FormView):
             return self.form_invalid(form)
 
         # Serialize emails list to JSON for adding to session dict
-        emails_json = json.dumps([email.__dict__ for email in emails_list])
+        #emails_json = json.dumps([email.__dict__ for email in emails_list])
+        emails_json = json.dumps(emails_list, cls=EmailEncoder)
         self.request.session['emails'] = emails_json
 
         # Return Httpresponse:
         return super().form_valid(form)
+
 
 class EmailsListView(LoginRequiredMixin, TemplateView):
     template_name = "email_manager/emails-list.html"
@@ -107,7 +108,29 @@ class EmailsListView(LoginRequiredMixin, TemplateView):
         #del self.request.session['emails']
 
         # Un-serialize JSON email list, back to Python list for use in template context
-        emails_list = json.loads(emails_json)
+        emails_list = json.loads(emails_json, object_hook=email_decoder)
         context['emails'] = emails_list
 
         return context
+
+class EmailContentView(LoginRequiredMixin, TemplateView):
+    template_name = "email_manager/email-content.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        emails_json = self.request.session['emails']
+        #del self.request.session['emails']
+
+        # Un-serialize JSON email list, back to Python list
+        emails_list = json.loads(emails_json, object_hook=email_decoder)
+        email_to_display_id = int(self.request.GET["email-id"])
+        email_to_display = None
+        for email in emails_list:
+            if email.id == email_to_display_id:
+                email_to_display = email
+
+        context['email'] = email_to_display
+
+        return context
+
+

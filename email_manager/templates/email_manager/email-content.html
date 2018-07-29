@@ -5,9 +5,44 @@
 
   <div class="container">
     <br />
+
+    <a href="{% url 'email_manager:emails-list' %}"><button class="btn btn-secondary btn-sm">Back to emails list</button></a>
+
+    <br />
+    <br />
+
+    <table>
+      <tr>
+        <td>
+        <h3> Sender: </h3>
+          </td>
+        <td>
+          <h3>{{ email.from_email }}</h3>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h3> Subject: </h3>
+        </td>
+        <td>
+          <h3> {{ email.subject }}</h3>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h3> Date: &nbsp; </h3>
+        </td>
+        <td>
+          <h3> {{ email.date }} </h3>
+        </td>
+      </tr>
+    </table>
+
+    <h3> Message: </h3>
     {% autoescape off %}
-      {{ email_text }}
+      {{ email.content }}
     {% endautoescape %}
+
   </div>
 
 {% endblock %}

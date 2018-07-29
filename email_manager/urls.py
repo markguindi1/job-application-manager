@@ -25,5 +25,6 @@ urlpatterns = [
     path('<int:pk>', views.EmailAccountUpdate.as_view(), name="email_address_update"),
     path('<int:pk>/delete', views.EmailAccountDelete.as_view(), name="email_address_delete"),
     path('email-form', views.EmailFormView.as_view(), name="email-form"),
-    path('emails', views.EmailsListView.as_view(), name="emails-list"),
+    path('emails-list', views.EmailsListView.as_view(), name="emails-list"),
+    path('email-content', views.EmailContentView.as_view(), name="email_content"),
 ]
