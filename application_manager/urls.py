@@ -20,8 +20,8 @@ from . import views
 app_name = 'application_manager'
 
 urlpatterns = [
-    path('', views.ApplicationsListView.as_view(), name='application-list'),
-    path('create', views.ApplicationCreate.as_view(), name='application-create'),
-    path('<int:pk>', views.ApplicationUpdate.as_view(), name='application-update'),
-    path('<int:pk>/delete', views.ApplicationDelete.as_view(), name='application-delete'),
+    path('', views.ApplicationsListView.as_view(), name='application_list'),
+    path('create', views.ApplicationCreate.as_view(), name='application_create'),
+    path('<int:pk>', views.ApplicationUpdate.as_view(), name='application_update'),
+    path('<int:pk>/delete', views.ApplicationDelete.as_view(), name='application_delete'),
 ]

@@ -24,11 +24,11 @@
             <li class="nav-item {% if url_name == 'homepage' %} active {% endif %}">
               <a class="nav-link" href="{% url 'homepage:homepage' %}">Home <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item {% if url_name == 'application-list' %} active {% endif %}">
-              <a class="nav-link" href="{% url 'application_manager:application-list' %}">Applications</a>
+            <li class="nav-item {% if url_name == 'application_list' %} active {% endif %}">
+              <a class="nav-link" href="{% url 'application_manager:application_list' %}">Applications</a>
             </li>
-            <li class="nav-item {% if url_name == 'emails_addresses_list' %} active {% endif %}">
-              <a class="nav-link" href="{% url 'email_manager:emails_addresses_list' %}">Emails</a>
+            <li class="nav-item {% if url_name == 'email_address_list' %} active {% endif %}">
+              <a class="nav-link" href="{% url 'email_manager:email_address_list' %}">Emails</a>
             </li>
             <!--<li class="nav-item">
               <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
@@ -45,7 +45,7 @@
                 </li>
               {% else %}
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'user_accounts:user-create' %}">Register</a>
+                  <a class="nav-link" href="{% url 'user_accounts:user_create' %}">Register</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'user_accounts:login' %}">Login</a>

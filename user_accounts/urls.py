@@ -22,5 +22,5 @@ app_name = 'user_accounts'
 urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('manage/', views.ManageAccountView.as_view(), name="manage_account"),
-    path('register/', views.UserCreate.as_view(), name="user-create"),
+    path('register/', views.UserCreate.as_view(), name="user_create"),
 ]

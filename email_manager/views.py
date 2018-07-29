@@ -29,7 +29,7 @@ class EmailAccountCreate(LoginRequiredMixin, CreateView):
     model = EmailAddress
     fields = ["address"]
     template_name = "email_manager/email-address-form.html"
-    success_url = reverse_lazy("email_manager:emails_addresses_list")
+    success_url = reverse_lazy("email_manager:email_address_list")
 
     # Overridden in order to set the new application's user to the current user
     def form_valid(self, form):
@@ -41,7 +41,7 @@ class EmailAccountUpdate(LoginRequiredMixin, UpdateView):
     model = EmailAddress
     fields = ["address"]
     template_name = "email_manager/email-address-form.html"
-    success_url = reverse_lazy("email_manager:emails_addresses_list")
+    success_url = reverse_lazy("email_manager:email_address_list")
 
     def get_queryset(self):
         return super(EmailAccountUpdate, self).get_queryset().filter(user=self.request.user)
@@ -51,7 +51,7 @@ class EmailAccountDelete(LoginRequiredMixin, DeleteView):
     model = EmailAddress
     fields = ["address"]
     template_name = "email_manager/email-address-delete-form.html"
-    success_url = reverse_lazy("email_manager:emails_addresses_list")
+    success_url = reverse_lazy("email_manager:email_address_list")
 
     def get_queryset(self):
         return super(EmailAccountDelete, self).get_queryset().filter(user=self.request.user)
@@ -60,7 +60,7 @@ class EmailAccountDelete(LoginRequiredMixin, DeleteView):
 class EmailFormView(LoginRequiredMixin, FormView):
     template_name = "email_manager/email-form.html"
     form_class = EmailForm
-    success_url = reverse_lazy('email_manager:emails-list')
+    success_url = reverse_lazy('email_manager:email_list')
 
     def get(self, request, *args, **kwargs):
         form_class = self.get_form_class()

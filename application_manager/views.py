@@ -78,7 +78,7 @@ class ApplicationDelete(LoginRequiredMixin, DeleteView):
     model = Application
     fields = APPLICATION_FORM_FIELDS
     template_name_suffix = '-delete-form'
-    success_url = reverse_lazy('application_manager:application-list')
+    success_url = reverse_lazy('application_manager:application_list')
 
     # Overridden in order to confirm that the request is coming from the owner of this resource
     def get_queryset(self):
