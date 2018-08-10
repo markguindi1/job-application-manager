@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import *
 from django.views.generic.base import TemplateView
@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from .get_emails import *
 from .forms import *
+from .get_emails_api import *
 import datetime
 import json
 import imaplib
@@ -74,6 +75,19 @@ class EmailFormView(LoginRequiredMixin, FormView):
             form.initial = {"gmail_email": email_addr}
         context['form'] = form
         return self.render_to_response(context)
+
+    # Overriden in order to get emails and redirect to emails list directly if Gmail API is used,
+    # so authentication via smtplib is unnecessary.
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            email_addr = self.request.GET["email_addr"]
+        except:
+            email_addr = None
+
+        if email_addr in GMAIL_API_EMAILS and self.request.method == "GET":
+            # TO-DO: write View for getting emails from Gmail API, and redirecting to that view
+            return redirect(reverse_lazy('homepage:homepage'))
+        return super(EmailFormView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         # Get email, pswd, since_date, use them to get emails
