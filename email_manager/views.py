@@ -83,7 +83,7 @@ class EmailFormView(LoginRequiredMixin, FormView):
         # otherwise use EmailForm and get emails using plain Python libraries.
         try:
             self.email_addr = self.request.GET["email_addr"]
-            self.emails_from_api = True
+            self.emails_from_api = self.email_addr in GMAIL_API_EMAILS
         except:
             self.email_addr = None
             self.emails_from_api = False
