@@ -44,7 +44,7 @@
                 {{ email.date }}
               </td>
               <td>
-                {{ email.content | truncatechars:50 }}
+                {{ email.snippet }}
               </td>
               <td>
                 <button type="submit" name="email-id" value="{{ email.id }}" class="btn btn-info btn-sm"> View </button>
