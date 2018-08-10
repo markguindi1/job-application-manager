@@ -60,39 +60,43 @@ class EmailAccountDelete(LoginRequiredMixin, DeleteView):
 
 class EmailFormView(LoginRequiredMixin, FormView):
     template_name = "email_manager/email-form.html"
-    form_class = EmailForm
     success_url = reverse_lazy('email_manager:email_list')
+
+    def get_form_class(self):
+        if self.emails_from_api:
+            return ApiEmailForm
+        return EmailForm
 
     def get(self, request, *args, **kwargs):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         context = self.get_context_data(**kwargs)
-        try:
-            email_addr = self.request.GET["email_addr"]
-        except:
-            email_addr = None
-        if email_addr is not None:
-            form.initial = {"gmail_email": email_addr}
+
+        if self.email_addr is not None:
+            form.initial = {"gmail_email": self.email_addr}
         context['form'] = form
         return self.render_to_response(context)
 
-    # Overriden in order to get emails and redirect to emails list directly if Gmail API is used,
-    # so authentication via smtplib is unnecessary.
     def dispatch(self, request, *args, **kwargs):
+        # Check if emails can be retrieved from API or not.
+        # If yes, use ApiEmailForm and get emails from API,
+        # otherwise use EmailForm and get emails using plain Python libraries.
         try:
-            email_addr = self.request.GET["email_addr"]
+            self.email_addr = self.request.GET["email_addr"]
+            self.emails_from_api = True
         except:
-            email_addr = None
+            self.email_addr = None
+            self.emails_from_api = False
 
-        if email_addr in GMAIL_API_EMAILS and self.request.method == "GET":
-            # TO-DO: write View for getting emails from Gmail API, and redirecting to that view
-            return redirect(reverse_lazy('homepage:homepage'))
         return super(EmailFormView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         # Get email, pswd, since_date, use them to get emails
         email_address = form.cleaned_data['gmail_email']
-        pswd = form.cleaned_data['password']
+        if not self.emails_from_api:
+            pswd = form.cleaned_data['password']
+        else:
+            pswd = ""
         date_from = form.cleaned_data['emails_since']
 
         # If authentication fails, redirect to email login page with prepopulated form
@@ -105,7 +109,6 @@ class EmailFormView(LoginRequiredMixin, FormView):
             return self.form_invalid(form)
 
         # Serialize emails list to JSON for adding to session dict
-        #emails_json = json.dumps([email.__dict__ for email in emails_list])
         emails_json = json.dumps(emails_list, cls=EmailEncoder)
         self.request.session['emails'] = emails_json
 
@@ -119,13 +122,13 @@ class EmailsListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         emails_json = self.request.session['emails']
-        #del self.request.session['emails']
 
         # Un-serialize JSON email list, back to Python list for use in template context
         emails_list = json.loads(emails_json, object_hook=email_decoder)
         context['emails'] = emails_list
 
         return context
+
 
 class EmailContentView(LoginRequiredMixin, TemplateView):
     template_name = "email_manager/email-content.html"
