@@ -87,7 +87,15 @@ class EmailFormView(LoginRequiredMixin, FormView):
         context = self.get_context_data(**kwargs)
 
         if self.email_addr is not None:
-            form.initial = {"gmail_email": self.email_addr}
+            form_initial_dict = {"gmail_email": self.email_addr}
+
+            try:
+                email_addr_object = EmailAddress.objects.get(address=self.email_addr)
+                form_initial_dict["emails_since"] = email_addr_object.last_checked_date
+            except Exception as e:
+                pass
+            form.initial = form_initial_dict
+
         context['form'] = form
         return self.render_to_response(context)
 
