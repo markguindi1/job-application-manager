@@ -29,7 +29,7 @@ class EmailAccountsListView(LoginRequiredMixin, ListView):
 
 class EmailAccountCreate(LoginRequiredMixin, CreateView):
     model = EmailAddress
-    fields = ["address"]
+    fields = ["address", "last_checked_date"]
     template_name = "email_manager/email-address-form.html"
     success_url = reverse_lazy("email_manager:email_address_list")
 
@@ -41,7 +41,7 @@ class EmailAccountCreate(LoginRequiredMixin, CreateView):
 
 class EmailAccountUpdate(LoginRequiredMixin, UpdateView):
     model = EmailAddress
-    fields = ["address"]
+    fields = ["address", "last_checked_date"]
     template_name = "email_manager/email-address-form.html"
     success_url = reverse_lazy("email_manager:email_address_list")
 
@@ -51,7 +51,7 @@ class EmailAccountUpdate(LoginRequiredMixin, UpdateView):
 
 class EmailAccountDelete(LoginRequiredMixin, DeleteView):
     model = EmailAddress
-    fields = ["address"]
+    #fields = ["address"]
     template_name = "email_manager/email-address-delete-form.html"
     success_url = reverse_lazy("email_manager:email_address_list")
 
