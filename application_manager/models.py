@@ -94,33 +94,33 @@ class Email(models.Model):
         return "Email at {} for {}".format(self.email_address, str(self.application))
 
 
-class Link(models.Model):
-    application = models.ForeignKey(Application, on_delete=models.CASCADE)
-    link = models.CharField(max_length = 300)
-
-    def __str__(self):
-        return "Link for {}".format(str(self.application))
-
-
-class Note(models.Model):
-    application = models.ForeignKey(Application, on_delete=models.CASCADE)
-    date_created = models.DateTimeField(null=True, blank=True)
-    date_last_edited = models.DateTimeField(null=True, blank=True)
-    content = models.TextField()
-
-    def __str__(self):
-        return "Note for {}".format(str(self.application))
-
-class Appointment(models.Model):
-    application = models.ForeignKey(Application, on_delete=models.CASCADE)
-    address_street = models.CharField(max_length=30, null=True, blank=True)
-    city = models.CharField(max_length=30)
-    state = models.CharField(max_length=20, null=True, blank=True)
-    country = models.CharField(max_length=20)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField(null=True, blank=True)
-    on_site = models.NullBooleanField(null=True, blank=True)
-    note = models.TextField()
-
-    def __str__(self):
-        return "Note for {}".format(str(self.application))
+# class Link(models.Model):
+#     application = models.ForeignKey(Application, on_delete=models.CASCADE)
+#     link = models.CharField(max_length = 300)
+#
+#     def __str__(self):
+#         return "Link for {}".format(str(self.application))
+#
+#
+# class Note(models.Model):
+#     application = models.ForeignKey(Application, on_delete=models.CASCADE)
+#     date_created = models.DateTimeField(null=True, blank=True)
+#     date_last_edited = models.DateTimeField(null=True, blank=True)
+#     content = models.TextField()
+#
+#     def __str__(self):
+#         return "Note for {}".format(str(self.application))
+#
+# class Appointment(models.Model):
+#     application = models.ForeignKey(Application, on_delete=models.CASCADE)
+#     address_street = models.CharField(max_length=30, null=True, blank=True)
+#     city = models.CharField(max_length=30)
+#     state = models.CharField(max_length=20, null=True, blank=True)
+#     country = models.CharField(max_length=20)
+#     start_time = models.DateTimeField()
+#     end_time = models.DateTimeField(null=True, blank=True)
+#     on_site = models.NullBooleanField(null=True, blank=True)
+#     note = models.TextField()
+#
+#     def __str__(self):
+#         return "Note for {}".format(str(self.application))
