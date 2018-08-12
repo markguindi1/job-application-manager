@@ -1,4 +1,3 @@
-from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import *
 from django.views.generic.base import TemplateView
@@ -9,8 +8,7 @@ from .models import *
 from .get_emails import *
 from .get_emails_api import *
 from .forms import *
-from .api_emails_list import *
-import datetime
+from email_manager.gmail_api_auth_files.api_emails_list import *
 import json
 import imaplib
 
