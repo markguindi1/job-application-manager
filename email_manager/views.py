@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from .get_emails import *
+from .get_emails_api import *
 from .forms import *
 from .api_emails_list import *
 import datetime
@@ -103,7 +104,10 @@ class EmailFormView(LoginRequiredMixin, FormView):
         # If authentication fails, redirect to email login page with prepopulated form
         # (by returning self.form_invalid(form)) and display "Invalid credentials" error message
         try:
-            emails_list = get_emails(email_address, pswd, date_from)
+            if self.email_from_api:
+                emails_list = get_emails_api(email_address, date_from)
+            else:
+                emails_list = get_emails(email_address, pswd, date_from)
         except imaplib.IMAP4.error as e:
             credens_error = ValidationError("Invalid credentials", code="invalid_credens")
             form.add_error(None, credens_error)
@@ -141,7 +145,7 @@ class EmailContentView(LoginRequiredMixin, TemplateView):
 
         # Un-serialize JSON email list, back to Python list
         emails_list = json.loads(emails_json, object_hook=email_decoder)
-        email_to_display_id = int(self.request.GET["email-id"])
+        email_to_display_id = self.request.GET["email-id"]
         email_to_display = None
         for email in emails_list:
             if email.id == email_to_display_id:
