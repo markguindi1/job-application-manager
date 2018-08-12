@@ -57,7 +57,7 @@ class Application(models.Model):
 class EmailAddress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.EmailField()
-    last_checked_date = models.DateField()
+    last_checked_date = models.DateField(null=True)
 
     def __str__(self):
         return self.address
