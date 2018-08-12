@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from .get_emails import *
 from .forms import *
-from .get_emails_api import *
+from .api_emails_list import *
 import datetime
 import json
 import imaplib
@@ -63,7 +63,7 @@ class EmailFormView(LoginRequiredMixin, FormView):
     success_url = reverse_lazy('email_manager:email_list')
 
     def get_form_class(self):
-        if self.emails_from_api:
+        if self.email_from_api:
             return ApiEmailForm
         return EmailForm
 
@@ -83,17 +83,17 @@ class EmailFormView(LoginRequiredMixin, FormView):
         # otherwise use EmailForm and get emails using plain Python libraries.
         try:
             self.email_addr = self.request.GET["email_addr"]
-            self.emails_from_api = self.email_addr in GMAIL_API_EMAILS
+            self.email_from_api = self.email_addr in GMAIL_API_EMAILS
         except:
             self.email_addr = None
-            self.emails_from_api = False
+            self.email_from_api = False
 
         return super(EmailFormView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         # Get email, pswd, since_date, use them to get emails
         email_address = form.cleaned_data['gmail_email']
-        if not self.emails_from_api:
+        if not self.email_from_api:
             pswd = form.cleaned_data['password']
         else:
             pswd = ""
