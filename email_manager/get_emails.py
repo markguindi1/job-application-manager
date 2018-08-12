@@ -6,16 +6,16 @@ from .email_class import *
 SMTP_SERVER = "imap.gmail.com"
 SMTP_PORT = 993
 
-
 # date format: %d-%b-%Y
 # ex: 17-Jun-2018
+DATE_FORMAT = "%d-%b-%Y"
+
+
 def get_emails(gmail_email, pswd, since_date):
     
     emails_list = []
 
     try:
-        DATE_FORMAT = "%d-%b-%Y"
-
         # 'mail' is the server
         mail = imaplib.IMAP4_SSL(SMTP_SERVER)
 
