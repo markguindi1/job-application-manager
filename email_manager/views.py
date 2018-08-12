@@ -29,10 +29,15 @@ class EmailAccountsListView(LoginRequiredMixin, ListView):
 
 class EmailAccountCreate(LoginRequiredMixin, CreateView):
     model = EmailAddress
-    fields = ["address"]
-    #fields = ["address", "last_checked_date"]
+    fields = ["address", "last_checked_date"]
     template_name = "email_manager/email-address-form.html"
     success_url = reverse_lazy("email_manager:email_address_list")
+
+    # Overriden so the "last_checked_date" widget is an HTML date input field
+    def get_form(self, form_class=None):
+        form = super(EmailAccountCreate, self).get_form()
+        form.fields['last_checked_date'].widget = CustomDateInput()
+        return form
 
     # Overridden in order to set the new application's user to the current user
     def form_valid(self, form):
@@ -42,10 +47,15 @@ class EmailAccountCreate(LoginRequiredMixin, CreateView):
 
 class EmailAccountUpdate(LoginRequiredMixin, UpdateView):
     model = EmailAddress
-    fields = ["address"]
-    #fields = ["address", "last_checked_date"]
+    fields = ["address", "last_checked_date"]
     template_name = "email_manager/email-address-form.html"
     success_url = reverse_lazy("email_manager:email_address_list")
+
+    # Overriden so the "last_checked_date" widget is an HTML date input field
+    def get_form(self, form_class=None):
+        form = super(EmailAccountUpdate, self).get_form()
+        form.fields['last_checked_date'].widget = CustomDateInput()
+        return form
 
     def get_queryset(self):
         return super(EmailAccountUpdate, self).get_queryset().filter(user=self.request.user)
@@ -53,7 +63,7 @@ class EmailAccountUpdate(LoginRequiredMixin, UpdateView):
 
 class EmailAccountDelete(LoginRequiredMixin, DeleteView):
     model = EmailAddress
-    fields = ["address"]
+    # fields = ["address"]
     template_name = "email_manager/email-address-delete-form.html"
     success_url = reverse_lazy("email_manager:email_address_list")
 
