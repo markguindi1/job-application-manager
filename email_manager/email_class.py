@@ -53,7 +53,7 @@ class Email:
     def get_content_api_email(self):
         # Possible guide for decoding emails:
         # https://github.com/abhishekchhibber/Gmail-Api-through-Python/blob/master/gmail_read.py
-        
+
         body = ""
         if 'data' in self.email['payload']['body']:
             body_data = self.email['payload']['body']['data']
