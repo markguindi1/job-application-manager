@@ -63,7 +63,7 @@ def get_emails(gmail_email, pswd, since_date):
 
                     email_id = i
 
-                    an_email = Email(msg, email_id)
+                    an_email = Email(msg, str(email_id))
                     emails_list.append(an_email)
 
     # If there are no emails (quick fix - to do proper fix later)
