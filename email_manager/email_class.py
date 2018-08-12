@@ -2,6 +2,8 @@ import json
 import mailparser
 import datetime
 import base64
+import email
+from bs4 import BeautifulSoup
 
 
 class Email:
@@ -37,26 +39,39 @@ class Email:
         return self.get_attribute_from_headers("From")
 
     def get_id_api_email(self):
+        print(self.email['id'])
         return self.email['id']
 
     def get_date_api_email(self):
-        epoch_timestamp = int(self.email['internalDate'])
-        return datetime.datetime.fromtimestamp(epoch_timestamp)
+        epoch_timestamp = int(self.email['internalDate']) // 1000
+        return datetime.datetime.fromtimestamp(epoch_timestamp).strftime("%a, %b %w, %Y, %I:%M:%S %p")
 
     def get_subject_api_email(self):
         return self.get_attribute_from_headers("Subject")
 
     def get_content_api_email(self):
+        # TO-DO: finish encoding/decoding emails
+        # https://github.com/abhishekchhibber/Gmail-Api-through-Python/blob/master/gmail_read.py
         body = ""
         if 'data' in self.email['payload']['body']:
             body_data = self.email['payload']['body']['data']
-            body += base64.urlsafe_b64decode(body_data.encode('ASCII'))
+            # #body += base64.urlsafe_b64decode(body_data.encode('ASCII'))
+            # body += body_data
+            #mssg_body = base64.urlsafe_b64decode(body_data.encode('ASCII'))
+            mssg_body = str(base64.urlsafe_b64decode(body_data.encode("ASCII")))
+            body += mssg_body
 
         # "Parts" is a list of dictionary, each dictionary being another message part
-        payload_parts = self.email['payload']['parts']
-        for part in payload_parts:
-            part_body_data = part['body']['data']
-            body += base64.urlsafe_b64decode(part_body_data.encode('ASCII'))
+        if 'parts' in self.email['payload']:
+            payload_parts = self.email['payload']['parts']
+            for part in payload_parts:
+                if 'data' in part['body']:
+                    part_body_data = part['body']['data']
+                    # #body += base64.urlsafe_b64decode(part_body_data.encode('ASCII'))
+                    # body += part_body_data
+                    #mssg_body = base64.urlsafe_b64decode(part_body_data.encode('ASCII'))
+                    mssg_body = str(base64.urlsafe_b64decode(part_body_data.encode("ASCII")))
+                    body += mssg_body
 
         return body
 
