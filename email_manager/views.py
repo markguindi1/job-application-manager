@@ -63,6 +63,7 @@ class EmailFormView(LoginRequiredMixin, FormView):
     success_url = reverse_lazy('email_manager:email_list')
 
     def get_form_class(self):
+        # if emails are retrieved from the Gmail API, password is unnecessary
         if self.email_from_api:
             return ApiEmailForm
         return EmailForm
@@ -84,7 +85,7 @@ class EmailFormView(LoginRequiredMixin, FormView):
         try:
             self.email_addr = self.request.GET["email_addr"]
             self.email_from_api = self.email_addr in GMAIL_API_EMAILS
-        except:
+        except KeyError:
             self.email_addr = None
             self.email_from_api = False
 
