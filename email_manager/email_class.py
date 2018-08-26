@@ -40,7 +40,7 @@ class Email:
         return self.get_attribute_from_headers("From")
 
     def get_id_api_email(self):
-        print(self.email['id'])
+        #print(self.email['id'])
         return self.email['id']
 
     def get_date_api_email(self):
