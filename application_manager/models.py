@@ -109,16 +109,16 @@ class CustomStateModel(models.Model):
     user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
     state = models.CharField(max_length=30)
 
+
 class CustomCredentialsModel(models.Model):
     # id = models.ForeignKey(User, primary_key=True, on_delete=models.CASCADE)
     user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
-
-
-
-
-
-
-
+    token = models.CharField(max_length=60)
+    refresh_token = models.CharField(max_length=60)
+    token_uri = models.CharField(max_length=150)
+    client_id = models.CharField(max_length=60)
+    client_secret = models.CharField(max_length=60)
+    scopes = models.CharField(max_length=60)
 
 
 # Models for features to implement in the future
