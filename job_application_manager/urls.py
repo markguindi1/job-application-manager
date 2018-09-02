@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from email_manager.gmail_api_auth_files.authentication_views import oauth2callback
 
 urlpatterns = [
     path('', include('application_manager.homepage_urls')),
@@ -22,4 +23,5 @@ urlpatterns = [
     path('user/', include('user_accounts.urls')),
     path('application/', include('application_manager.urls')),
     path('email/', include('email_manager.urls')),
+    path('oauth2callback/', oauth2callback, name="oauth2callback"),
 ]

@@ -8,7 +8,8 @@ from .models import *
 from .get_emails import *
 from .get_emails_api import *
 from .forms import *
-from email_manager.gmail_api_auth_files.api_emails_list import *
+from .gmail_api_auth_files import authentication_views
+from email_manager.old_gmail_api_auth_files.api_emails_list import *
 import json
 import imaplib
 
@@ -101,6 +102,11 @@ class EmailFormView(LoginRequiredMixin, FormView):
         # Check if emails can be retrieved from API or not.
         # If yes, use ApiEmailForm and get emails from API,
         # otherwise use EmailForm and get emails using plain Python libraries.
+
+        if not CustomCredentialsModel.objects.filter(user=request.user).exists():
+            return authentication_views.authorize(request)
+
+        # To do: clean up
         try:
             self.email_addr = self.request.GET["email_addr"]
             self.email_from_api = self.email_addr in GMAIL_API_EMAILS

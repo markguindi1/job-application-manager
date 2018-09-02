@@ -20,7 +20,7 @@ def get_emails_api(email, since_date):
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    auth_dir = "gmail_api_auth_files"
+    auth_dir = "old_gmail_api_auth_files"
 
     full_auth_dir = os.path.join(current_dir, auth_dir)
 
