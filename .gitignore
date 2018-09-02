@@ -110,4 +110,5 @@ TODO.txt
 email_manager/api_emails_list.py
 *credentials.json
 *token.json
-email_manager/gmail_api_auth_files
+email_manager/old_gmail_api_auth_files
+*client_secret.json
