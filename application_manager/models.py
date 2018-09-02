@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+# from oauth2client.contrib.django_util.models import CredentialsField
 
 # Create your models here.
+
 
 class Application(models.Model):
     FULLTIME = 'Full-time'
@@ -94,6 +96,32 @@ class Email(models.Model):
     def __str__(self):
         return "Email at {} for {}".format(self.email_address, str(self.application))
 
+
+# Google API Authorization models
+
+# class CredentialsModel(models.Model):
+#     id = models.ForeignKey(User, primary_key=True)
+#     credential = CredentialsField()
+
+# My custom credentials model
+
+class CustomStateModel(models.Model):
+    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
+    state = models.CharField(max_length=30)
+
+class CustomCredentialsModel(models.Model):
+    # id = models.ForeignKey(User, primary_key=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
+
+
+
+
+
+
+
+
+
+# Models for features to implement in the future
 
 # class Link(models.Model):
 #     application = models.ForeignKey(Application, on_delete=models.CASCADE)
