@@ -1,42 +1,25 @@
-import os
-from apiclient.discovery import build
-from httplib2 import Http
-from oauth2client import file as oauth_file, client, tools
+import google.oauth2.credentials
+import googleapiclient.discovery
 from .email_class import *
+from application_manager.models import *
 
-# If modifying these scopes, delete the file token.json.
-SCOPES = 'https://www.googleapis.com/auth/gmail.readonly'
+
+API_SERVICE_NAME = "gmail"
+API_VERSION = "v1"
 
 # date format: %Y/%m/%d
 # ex: 2018/06/17
 DATE_FORMAT = "%Y/%m/%d"
 
 
-def get_emails_api(email, since_date):
+def get_emails_api(current_user, since_date):
 
     emails_list = []
-    # token_filename = email + "_token.json"
-    # credentials_filename = email + "_credentials.json"
-
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-
-    auth_dir = "old_gmail_api_auth_files"
-
-    full_auth_dir = os.path.join(current_dir, auth_dir)
-
-    token_filename = "token.json"
-    credentials_filename = "credentials.json"
-
-    token_filename = os.path.join(full_auth_dir, token_filename)
-    credentials_filename = os.path.join(full_auth_dir, credentials_filename)
 
     try:
-        store = oauth_file.Storage(token_filename)
-        creds = store.get()
-        if not creds or creds.invalid:
-            flow = client.flow_from_clientsecrets(credentials_filename, SCOPES)
-            creds = tools.run_flow(flow, store)
-        service = build('gmail', 'v1', http=creds.authorize(Http()))
+        credentials_dict = get_credentials_dict_from_db(current_user)
+        credentials = google.oauth2.credentials.Credentials(**credentials_dict)
+        service = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, credentials=credentials)
 
         since_date_query = "after:" + since_date.strftime(DATE_FORMAT)
         api_result = service.users().messages().list(userId='me', q=since_date_query).execute()
@@ -55,12 +38,30 @@ def get_emails_api(email, since_date):
     return emails_list
 
 
+def get_credentials_dict_from_db(current_user):
+    credentials = CustomCredentialsModel.objects.filter(user=request.user)
+    credentials_dict = {'token': credentials.token,
+                        'refresh_token': credentials.refresh_token,
+                        'token_uri': credentials.token_uri,
+                        'client_id': credentials.client_id,
+                        'client_secret': credentials.client_secret,
+                        'scopes': credentials.scopes}
+    return credentials_dict
 
 
-def get_credentials_dict_from_db(request):
-    pass
+def save_credentials_to_db(current_user, credentials):
+    user_credentials = CustomCredentialsModel.objects.filter(user=current_user)
+    if not user_credentials.exists():
+        user_credentials = CustomCredentialsModel(user=current_user)
+    user_credentials.token = credentials.token
+    user_credentials.refresh_token = credentials.refresh_token
+    user_credentials.token_uri = credentials.token_uri
+    user_credentials.client_id = credentials.client_id
+    user_credentials.client_secret = credentials.client_secret
+    user_credentials.scopes = credentials.scopes
 
-def save_credentials_to_db():
-    pass
+    user_credentials.save()
+
+
 
 

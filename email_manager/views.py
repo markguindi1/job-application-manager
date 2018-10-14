@@ -150,10 +150,13 @@ class EmailsListView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        emails_json = self.request.session['emails']
+        try:
+            emails_json = self.request.session['emails']
 
-        # Un-serialize JSON email list, back to Python list for use in template context
-        emails_list = json.loads(emails_json, object_hook=email_decoder)
+            # Un-serialize JSON email list, back to Python list for use in template context
+            emails_list = json.loads(emails_json, object_hook=email_decoder)
+        except:
+            emails_list = []
         context['emails'] = emails_list
 
         return context

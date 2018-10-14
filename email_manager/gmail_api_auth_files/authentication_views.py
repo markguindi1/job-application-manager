@@ -94,7 +94,7 @@ def oauth2callback(request):
     print("These are the credentials:\n", request.session['credentials'])
 
     print("Redirecting to after auth: ", request.session['next'])
-    return redirect(request.session['next'])
+    return redirect(reverse("email_manager:email_list"))
 
 
 def credentials_to_dict(credentials):
