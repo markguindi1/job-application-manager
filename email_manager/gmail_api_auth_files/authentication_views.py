@@ -42,7 +42,7 @@ def authorize(request):
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=SCOPES)
 
-    flow.redirect_uri = 'http://localhost:8000/oauth2callback/'
+    flow.redirect_uri = 'http://localhost:8000/email/oauth2callback/'
 
     authorization_url, state = flow.authorization_url(
         # Enable offline access so that you can refresh an access token without

@@ -23,5 +23,4 @@ urlpatterns = [
     path('user/', include('user_accounts.urls')),
     path('application/', include('application_manager.urls')),
     path('email/', include('email_manager.urls')),
-    path('oauth2callback/', oauth2callback, name="oauth2callback"),
 ]

@@ -147,7 +147,11 @@ class EmailFormView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class GmailAuthView(LoginRequiredMixin, RedirectView):
+class GmailAuthRedirectView(LoginRequiredMixin, RedirectView):
+    url = "/"
+
+
+class OAuth2CallbackRedirectView(LoginRequiredMixin, RedirectView):
     url = "/"
 
 
