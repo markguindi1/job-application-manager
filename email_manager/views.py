@@ -70,6 +70,8 @@ class EmailAccountDelete(LoginRequiredMixin, DeleteView):
         return super(EmailAccountDelete, self).get_queryset().filter(user=self.request.user)
 
 
+# Not a complete "Formview", as if the email address is a gmail address, GET-ing this view will redirect to the
+# Google Auth Page, which will then redirect to the EmailsListView
 class EmailFormView(LoginRequiredMixin, FormView):
     template_name = "email_manager/email-form.html"
     success_url = reverse_lazy('email_manager:email_list')
@@ -143,6 +145,10 @@ class EmailFormView(LoginRequiredMixin, FormView):
 
         # Return Httpresponse:
         return super().form_valid(form)
+
+
+class GmailAuthView(LoginRequiredMixin, RedirectView):
+    url = "/"
 
 
 class EmailsListView(LoginRequiredMixin, TemplateView):
