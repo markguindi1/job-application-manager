@@ -5,7 +5,3 @@ from .models import *
 
 admin.site.register(Application)
 admin.site.register(EmailAddress)
-admin.site.register(Email)
-# admin.site.register(Link)
-# admin.site.register(Note)
-# admin.site.register(Appointment)

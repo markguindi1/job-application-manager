@@ -48,6 +48,7 @@ class Application(models.Model):
     application_link = models.CharField(max_length=256, null=True, blank=True)
     status = models.CharField(max_length=30, null=True, blank=True, choices=STATUS_CHOICES)
     lead = models.SmallIntegerField()
+    email_tag = models.CharField(max_length=20, null=True, blank=True)
 
     def __str__(self):
         return self.company_name + ' (' + self.position + ')'
@@ -67,89 +68,3 @@ class EmailAddress(models.Model):
     def get_absolute_url():
         return reverse('email_manager:emails_addresses_list')
 
-
-class Email(models.Model):
-    JOB_AD = "Job ad"
-    IN_PROGRESS = 'In progress'
-    APPLIED = 'Applied'
-    INTERVIEWING = "Interviewing"
-    ACCEPTANCE = 'Acceptance'
-    REJECTION = 'Rejection'
-    OFFER_ACCEPTANCE = 'Offer acceptance'
-    OFFER_REJECTION = 'Offer rejection'
-    TAG_CHOICES = [
-        (JOB_AD, "Job ad"),
-        (IN_PROGRESS, 'In progress'),
-        (APPLIED, 'Applied'),
-        (INTERVIEWING, "Interviewing"),
-        (ACCEPTANCE, 'Acceptance'),
-        (REJECTION, 'Rejection'),
-        (OFFER_ACCEPTANCE, "Offer acceptance"),
-        (OFFER_REJECTION, 'Offer rejection'),
-    ]
-
-    application = models.ForeignKey(Application, on_delete=models.CASCADE)
-    email_address = models.ForeignKey(EmailAddress, null=True, on_delete=models.SET_NULL)
-    email_link = models.CharField(max_length = 256)
-    email_tag = models.CharField(max_length=30, null=True, blank=True, choices=TAG_CHOICES)
-
-    def __str__(self):
-        return "Email at {} for {}".format(self.email_address, str(self.application))
-
-
-# Google API Authorization models
-
-# class CredentialsModel(models.Model):
-#     id = models.ForeignKey(User, primary_key=True)
-#     credential = CredentialsField()
-
-# My custom credentials model
-
-class CustomStateModel(models.Model):
-    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
-    state = models.CharField(max_length=30)
-
-
-class CustomCredentialsModel(models.Model):
-    # id = models.ForeignKey(User, primary_key=True, on_delete=models.CASCADE)
-    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
-    token = models.CharField(max_length=60)
-    refresh_token = models.CharField(max_length=60)
-    token_uri = models.CharField(max_length=150)
-    client_id = models.CharField(max_length=60)
-    client_secret = models.CharField(max_length=60)
-    scopes = models.CharField(max_length=60)
-
-
-# Models for features to implement in the future
-
-# class Link(models.Model):
-#     application = models.ForeignKey(Application, on_delete=models.CASCADE)
-#     link = models.CharField(max_length = 300)
-#
-#     def __str__(self):
-#         return "Link for {}".format(str(self.application))
-#
-#
-# class Note(models.Model):
-#     application = models.ForeignKey(Application, on_delete=models.CASCADE)
-#     date_created = models.DateTimeField(null=True, blank=True)
-#     date_last_edited = models.DateTimeField(null=True, blank=True)
-#     content = models.TextField()
-#
-#     def __str__(self):
-#         return "Note for {}".format(str(self.application))
-#
-# class Appointment(models.Model):
-#     application = models.ForeignKey(Application, on_delete=models.CASCADE)
-#     address_street = models.CharField(max_length=30, null=True, blank=True)
-#     city = models.CharField(max_length=30)
-#     state = models.CharField(max_length=20, null=True, blank=True)
-#     country = models.CharField(max_length=20)
-#     start_time = models.DateTimeField()
-#     end_time = models.DateTimeField(null=True, blank=True)
-#     on_site = models.NullBooleanField(null=True, blank=True)
-#     note = models.TextField()
-#
-#     def __str__(self):
-#         return "Note for {}".format(str(self.application))
