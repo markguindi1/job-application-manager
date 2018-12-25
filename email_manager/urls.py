@@ -24,7 +24,7 @@ urlpatterns = [
     path('create', views.EmailAccountCreate.as_view(), name="email_address_create"),
     path('<int:pk>', views.EmailAccountUpdate.as_view(), name="email_address_update"),
     path('<int:pk>/delete', views.EmailAccountDelete.as_view(), name="email_address_delete"),
-    path('email-form', views.EmailFormView.as_view(), name="email_form"),
+    path('gmail-auth', views.GmailAuthView.as_view(), name="gmail_auth"),
     path('emails-list', views.EmailsListView.as_view(), name="email_list"),
     path('email-content', views.EmailContentView.as_view(), name="email_content"),
 ]
