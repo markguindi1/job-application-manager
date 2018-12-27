@@ -1,112 +1,120 @@
-from django.urls import reverse_lazy
+from django.shortcuts import redirect
 from django.views.generic import *
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import FormView
-from django.core.exceptions import ValidationError
 from django.contrib.auth.mixins import LoginRequiredMixin
 from ..models import *
-from ..get_emails import *
 from ..get_emails_api import *
-from ..forms import *
-from ..gmail_api_auth_files import authentication_views
-from email_manager.old_gmail_api_auth_files.api_emails_list import *
 import json
-import imaplib
+
+import google.oauth2.credentials
+import google_auth_oauthlib.flow
+import googleapiclient.discovery
+
+
+# The name of the directory containing the clients secret file
+CLIENT_SECRETS_DIR_NAME = "gmail_api_auth_files"
+# The name of a file that contains the OAuth 2.0 information for this application, including its client_id and
+# client_secret.
+CLIENT_SECRETS_FILE_NAME = "client_secret.json"
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+print("Current dir:", current_dir)
+parent_dir = os.path.join(current_dir, os.pardir)
+print("Parent dir:", parent_dir)
+client_secrets_dir = os.path.join(parent_dir, CLIENT_SECRETS_DIR_NAME)
+print("File dir:", client_secrets_dir)
+client_secrets_file = os.path.join(client_secrets_dir, CLIENT_SECRETS_FILE_NAME)
+print("File dir:", client_secrets_file)
+
+# This OAuth 2.0 access scope allows for full read/write access to the
+# authenticated user's account and requires requests to use an SSL connection.
+SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+API_SERVICE_NAME = 'gmail'
+API_VERSION = 'v1'
+
 
 # Create your views here.
 
 
-# Not a complete "Formview", as if the email address is a gmail address, GET-ing this view will redirect to the
-# Google Auth Page, which will then redirect to the EmailsListView
-class EmailFormView(LoginRequiredMixin, FormView):
-    template_name = "email_manager/email-form.html"
-    success_url = reverse_lazy('email_manager:email_list')
-
-    def get_form_class(self):
-        # if emails are retrieved from the Gmail API, password is unnecessary
-        if self.email_from_api:
-            return ApiEmailForm
-        return EmailForm
-
-    def get(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        context = self.get_context_data(**kwargs)
-
-        if self.email_addr is not None:
-            form.initial = {"gmail_email": self.email_addr}
-            # if email; address is found in database, pre-populate 'Emails Since'
-            # field with 'Last Checked Date' field value
-            try:
-                email_addr_object = EmailAddress.objects.get(address=self.email_addr)
-                form.initial["emails_since"] = email_addr_object.last_checked_date
-            except Exception as e:
-                pass
-
-        context['form'] = form
-        return self.render_to_response(context)
-
-    def dispatch(self, request, *args, **kwargs):
-        # Check if emails can be retrieved from API or not.
-        # If yes, use ApiEmailForm and get emails from API,
-        # otherwise use EmailForm and get emails using plain Python libraries.
-
-        if not CustomCredentialsModel.objects.filter(user=request.user).exists():
-            return authentication_views.authorize(request)
-
-        # To do: clean up
-        try:
-            self.email_addr = self.request.GET["email_addr"]
-            self.email_from_api = self.email_addr in GMAIL_API_EMAILS
-        except KeyError:
-            self.email_addr = None
-            self.email_from_api = False
-
-        return super(EmailFormView, self).dispatch(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        # Get email, pswd, since_date, use them to get emails
-        email_address = form.cleaned_data['gmail_email']
-        if not self.email_from_api:
-            pswd = form.cleaned_data['password']
-        else:
-            pswd = ""
-        date_from = form.cleaned_data['emails_since']
-
-        # If authentication fails, redirect to email login page with prepopulated form
-        # (by returning self.form_invalid(form)) and display "Invalid credentials" error message
-        try:
-            if self.email_from_api:
-                emails_list = get_emails_api(email_address, date_from)
-            else:
-                emails_list = get_emails(email_address, pswd, date_from)
-        except imaplib.IMAP4.error as e:
-            credens_error = ValidationError("Invalid credentials", code="invalid_credens")
-            form.add_error(None, credens_error)
-            return self.form_invalid(form)
-
-        # Serialize emails list to JSON for adding to session dict
-        emails_json = json.dumps(emails_list, cls=EmailEncoder)
-        self.request.session['emails'] = emails_json
-
-        # Return Httpresponse:
-        return super().form_valid(form)
-
-
 class GmailAuthRedirectView(LoginRequiredMixin, RedirectView):
-    url = "/"
+    # url = "/"
+
+    def authorize(self, request):
+
+        # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
+        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+            client_secrets_file, scopes=SCOPES)
+
+        flow.redirect_uri = 'http://localhost:8000/email/oauth2callback/'
+
+        authorization_url, state = flow.authorization_url(
+            # Enable offline access so that you can refresh an access token without
+            # re-prompting the user for permission. Recommended for web server apps.
+            access_type='offline',
+            # Enable incremental authorization. Recommended as a best practice.
+            include_granted_scopes='true')
+
+        # Setting redirect url to authorization url.
+        self.url = authorization_url
+
+        # Store the state so the callback can verify the auth server response.
+        user_state = CustomStateModel(user=request.user, state=state)
+        user_state.save()
+
+        print("New state should be:" + state)
+        request.session['state'] = state
+        print("Session state after set is:" + request.session['state'])
+        request.session['next'] = request.get_full_path()
+        print("Next:", request.session['next'])
 
     def dispatch(self, request, *args, **kwargs):
-
-        pass
+        self.authorize(request)
+        self.url = self.url.replace('%', '%%')
+        return super(GmailAuthRedirectView, self).dispatch(request, *args, **kwargs)
 
 
 class OAuth2CallbackRedirectView(LoginRequiredMixin, RedirectView):
     url = "/"
 
+    def dispatch(self, request, *args, **kwargs):
+        # Specify the state when creating the flow in the callback so that it can
+        # verified in the authorization server response.
+
+        print(request.user.is_authenticated)
+        state = CustomStateModel.objects.get(user=request.user).state
+        print("Session state after callback is:" + state)
+
+        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+            client_secrets_file, scopes=SCOPES, state=state)
+
+        # Don't know why this is here. I think the guys at Google just copy-pasted from above.
+        flow.redirect_uri = 'http://localhost:8000/oauth2callback/'
+
+        # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+        authorization_response = request.build_absolute_uri()
+        print("Auth response:" + authorization_response)
+        flow.fetch_token(authorization_response=authorization_response)
+
+        # Store credentials in the session.
+        # ACTION ITEM: In a production app, you likely want to save these
+        #              credentials in a persistent database instead.
+        credentials = flow.credentials
+        self.request.session['credentials'] = credentials
+        # user_credens = CustomCredentialsModel()
+        print("These are the credentials:\n", request.session['credentials'])
+
+        print("Redirecting to after auth: ", request.session['next'])
+        return super(OAuth2CallbackRedirectView, self).dispatch(request, *args, **kwargs)
+
 
 class EmailsListView(LoginRequiredMixin, TemplateView):
     template_name = "email_manager/emails-list.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        # If not authenticated, redirect to Gmail Auth Redirect View
+        if 'credentials' not in self.request.session:
+            return redirect(reverse('gmail_auth'))
+        return super(EmailsListView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

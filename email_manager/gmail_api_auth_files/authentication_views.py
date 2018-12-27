@@ -10,11 +10,16 @@ import google_auth_oauthlib.flow
 import googleapiclient.discovery
 
 
-# This variable specifies the name of a file that contains the OAuth 2.0
-# information for this application, including its client_id and client_secret.
+# The name of the directory containing the clients secret file
+CLIENT_SECRETS_DIR_NAME = "gmail_api_auth_files"
+# The name of a file that contains the OAuth 2.0 information for this application, including its client_id and
+# client_secret.
 CLIENT_SECRETS_FILE_NAME = "client_secret.json"
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
-CLIENT_SECRETS_FILE = os.path.join(current_dir, CLIENT_SECRETS_FILE_NAME)
+parent_dir = os.path.join(current_dir, os.pardir)
+client_secrets_dir = os.path.join(parent_dir, CLIENT_SECRETS_DIR_NAME)
+client_secrets_file = os.path.join(current_dir, CLIENT_SECRETS_FILE_NAME)
 
 
 # This OAuth 2.0 access scope allows for full read/write access to the
@@ -32,7 +37,7 @@ def authorize(request):
 
     # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        CLIENT_SECRETS_FILE, scopes=SCOPES)
+        client_secrets_file, scopes=SCOPES)
 
     flow.redirect_uri = 'http://localhost:8000/email/oauth2callback/'
 
