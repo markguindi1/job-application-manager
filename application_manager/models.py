@@ -68,3 +68,27 @@ class EmailAddress(models.Model):
     def get_absolute_url():
         return reverse('email_manager:emails_addresses_list')
 
+
+class CustomStateModel(models.Model):
+    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
+    state = models.CharField(max_length=30)
+
+
+class CustomCredentialsModel(models.Model):
+
+    def __init__(self, user, flow_credentials):
+        self.user = user
+        self.token = flow_credentials.token
+        self.refresh_token = flow_credentials.refrsh_token
+        self.token_uri = flow_credentials.token_uri
+        self.client_id = flow_credentials.client_id
+        self.client_secret = flow_credentials.client_secret
+        self.scopes = flow_credentials.scopes
+
+    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
+    token = models.CharField(max_length=60)
+    refresh_token = models.CharField(max_length=60)
+    token_uri = models.CharField(max_length=150)
+    client_id = models.CharField(max_length=60)
+    client_secret = models.CharField(max_length=60)
+    scopes = models.CharField(max_length=60)
