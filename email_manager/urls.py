@@ -21,11 +21,11 @@ app_name = 'email_manager'
 
 urlpatterns = [
     path('', views.EmailAccountsListView.as_view(), name="email_address_list"),
-    path('create', views.EmailAccountCreate.as_view(), name="email_address_create"),
-    path('<int:pk>', views.EmailAccountUpdate.as_view(), name="email_address_update"),
-    path('<int:pk>/delete', views.EmailAccountDelete.as_view(), name="email_address_delete"),
-    path('gmail-auth', views.GmailAuthRedirectView.as_view(), name="gmail_auth"),
-    path('oauth2callback', views.OAuth2CallbackRedirectView.as_view(), name="oauth2callback"),
-    path('emails-list', views.EmailsListView.as_view(), name="email_list"),
-    path('email-content', views.EmailContentView.as_view(), name="email_content"),
+    path('create/', views.EmailAccountCreate.as_view(), name="email_address_create"),
+    path('<int:pk>/', views.EmailAccountUpdate.as_view(), name="email_address_update"),
+    path('<int:pk>/delete/', views.EmailAccountDelete.as_view(), name="email_address_delete"),
+    path('gmail-auth/', views.GmailAuthRedirectView.as_view(), name="gmail_auth"),
+    path('oauth2callback/', views.OAuth2CallbackRedirectView.as_view(), name="oauth2callback"),
+    path('emails-list/', views.EmailsListView.as_view(), name="email_list"),
+    path('email-content/', views.EmailContentView.as_view(), name="email_content"),
 ]
