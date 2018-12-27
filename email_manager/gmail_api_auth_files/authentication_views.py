@@ -12,7 +12,10 @@ import googleapiclient.discovery
 
 # This variable specifies the name of a file that contains the OAuth 2.0
 # information for this application, including its client_id and client_secret.
-CLIENT_SECRETS_FILE = "client_secret.json"
+CLIENT_SECRETS_FILE_NAME = "client_secret.json"
+current_dir = os.path.dirname(os.path.abspath(__file__))
+CLIENT_SECRETS_FILE = os.path.join(current_dir, CLIENT_SECRETS_FILE_NAME)
+
 
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account and requires requests to use an SSL connection.
@@ -20,17 +23,6 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 API_SERVICE_NAME = 'gmail'
 API_VERSION = 'v1'
 
-
-current_dir = os.path.dirname(os.path.abspath(__file__))
-
-#auth_dir = "gmail_api_auth_files"
-
-#full_auth_dir = os.path.join(current_dir, auth_dir)
-full_auth_dir = current_dir
-
-CLIENT_SECRETS_FILE = "client_secret.json"
-
-CLIENT_SECRETS_FILE = os.path.join(full_auth_dir, CLIENT_SECRETS_FILE)
 
 # View that checks if Google authorization required
 
@@ -66,7 +58,7 @@ def authorize(request):
 
 # View that handles return from Google authorization page, and redirects to correct page
 # (saved in session)
-# /oauth2callback
+# email/oauth2callback
 def oauth2callback(request):
     # Specify the state when creating the flow in the callback so that it can
     # verified in the authorization server response.
