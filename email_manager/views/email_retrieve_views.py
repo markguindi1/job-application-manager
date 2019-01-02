@@ -2,6 +2,7 @@ from django.shortcuts import redirect
 from django.views.generic import *
 from django.views.generic.base import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import authenticate, login
 from ..models import *
 from ..get_emails_api import *
 import json
@@ -18,13 +19,13 @@ CLIENT_SECRETS_DIR_NAME = "gmail_api_auth_files"
 CLIENT_SECRETS_FILE_NAME = "client_secret.json"
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-print("Current dir:", current_dir)
+# print("Current dir:", current_dir)
 parent_dir = os.path.join(current_dir, os.pardir)
-print("Parent dir:", parent_dir)
+# print("Parent dir:", parent_dir)
 client_secrets_dir = os.path.join(parent_dir, CLIENT_SECRETS_DIR_NAME)
-print("File dir:", client_secrets_dir)
+# print("File dir:", client_secrets_dir)
 client_secrets_file = os.path.join(client_secrets_dir, CLIENT_SECRETS_FILE_NAME)
-print("File dir:", client_secrets_file)
+# print("File dir:", client_secrets_file)
 
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account and requires requests to use an SSL connection.
@@ -76,22 +77,24 @@ class GmailAuthRedirectView(LoginRequiredMixin, RedirectView):
 class OAuth2CallbackRedirectView(LoginRequiredMixin, RedirectView):
     url = "/"
 
-    def dispatch(self, request, *args, **kwargs):
+    def get_redirect_url(self, *args, **kwargs):
         # Specify the state when creating the flow in the callback so that it can
         # verified in the authorization server response.
 
-        print(request.user.is_authenticated)
-        state = CustomStateModel.objects.get(user=request.user).state
+        print("USERNAME:", self.request.user.username)
+        login(self.request, self.request.user)
+        print(self.request.user.is_authenticated)
+        state = CustomStateModel.objects.get(user=self.request.user).state
         print("Session state after callback is:" + state)
 
         flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
             client_secrets_file, scopes=SCOPES, state=state)
 
-        # Don't know why this is here. I think the guys at Google just copy-pasted from above.
-        flow.redirect_uri = 'http://localhost:8000/oauth2callback/'
+        # DO NOT REMOVE THIS
+        flow.redirect_uri = 'http://localhost:8000/email/oauth2callback/'
 
         # Use the authorization server's response to fetch the OAuth 2.0 tokens.
-        authorization_response = request.build_absolute_uri()
+        authorization_response = self.request.build_absolute_uri()
         print("Auth response:" + authorization_response)
         flow.fetch_token(authorization_response=authorization_response)
 
@@ -99,12 +102,12 @@ class OAuth2CallbackRedirectView(LoginRequiredMixin, RedirectView):
         # ACTION ITEM: In a production app, you likely want to save these
         #              credentials in a persistent database instead.
         credentials = flow.credentials
-        self.request.session['credentials'] = credentials
+        self.request.session['credentials'] = credentials_to_dict(credentials)
         # user_credens = CustomCredentialsModel()
-        print("These are the credentials:\n", request.session['credentials'])
+        print("These are the credentials:\n", str(self.request.session['credentials']))
 
-        print("Redirecting to after auth: ", request.session['next'])
-        return super(OAuth2CallbackRedirectView, self).dispatch(request, *args, **kwargs)
+        print("Redirecting to after auth: ", self.request.session['next'])
+        return super(OAuth2CallbackRedirectView, self).get_redirect_url(*args, **kwargs)
 
 
 class EmailsListView(LoginRequiredMixin, TemplateView):
@@ -151,3 +154,10 @@ class EmailContentView(LoginRequiredMixin, TemplateView):
         return context
 
 
+def credentials_to_dict(credentials):
+    return {'token': credentials.token,
+            'refresh_token': credentials.refresh_token,
+            'token_uri': credentials.token_uri,
+            'client_id': credentials.client_id,
+            'client_secret': credentials.client_secret,
+            'scopes': credentials.scopes}
