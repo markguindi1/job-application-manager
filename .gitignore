@@ -112,3 +112,4 @@ email_manager/api_emails_list.py
 *token.json
 email_manager/old_gmail_api_auth_files
 *client_secret.json
+*.DS_Store
